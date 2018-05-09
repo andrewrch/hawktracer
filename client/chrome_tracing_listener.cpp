@@ -1,5 +1,13 @@
 #include "chrome_tracing_listener.hpp"
 
+namespace 
+{
+uint64_t to_microseconds(int64_t nanoseconds)
+{
+    return nanoseconds * 0.001;
+}
+}
+
 namespace HawkTracer
 {
 namespace client
@@ -63,8 +71,8 @@ void ChromeTraceListener::process_event(const parser::Event& event)
         return;
     }
     file << ",{\"name\": \"" << label
-         << "\", \"ph\": \"X\", \"ts\": " << event.get_value<uint64_t>("timestamp")
-         << ", \"dur\": " << event.get_value_or_default<uint64_t>("duration", 0u)
+         << "\", \"ph\": \"X\", \"ts\": " << to_microseconds(event.get_value<uint64_t>("timestamp"))
+         << ", \"dur\": " << to_microseconds(event.get_value_or_default<uint64_t>("duration", 0u))
          << ", \"pid\": 0, \"tid\": " << event.get_value_or_default<uint32_t>("thread_id", 0)
          << "}";
 }
